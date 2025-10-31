@@ -8,8 +8,8 @@
 #ifndef SERVO_H_
 #define SERVO_H_
 //TODO: constanst
-#define left_position 1150
-#define right_position 5100
+#define left_position 5100
+#define right_position 1150
 #define center_position 3100
 #define TPM1_MOD 40000
 //TODO: functions

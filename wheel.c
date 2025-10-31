@@ -4,8 +4,10 @@
  *  Created on: Oct 30, 2025
  *      Author: Lou
  */
+
 #include "MKL46Z4.h"
 #include "wheel.h"
+#include "function.h"
 void go_straight(){
 	// Left motor (PTB0=AI2 high, PTB1=AI1 low)
 	GPIOB->PSOR |= (1<<0);
@@ -17,6 +19,7 @@ void go_straight(){
 	setMotorSpeed(leftSpeed,rightSpeed);
 }
 void turn_left(){
+	PRINTF("Left\n");
 	// Left motor (PTB0=AI2 low, PTB1=AI1 high)
 	GPIOB->PSOR |= (1<<1);
 	GPIOB->PCOR |= (1<<0);
@@ -25,10 +28,11 @@ void turn_left(){
 	GPIOC->PCOR |= (1<<2);
 	// Set PWM outputs
 	setMotorSpeed(leftSpeed,rightSpeed);
-	delay(timeTurnLeft);
+	delay_ms(timeTurnLeft);
 	stop();
 }
 void turn_right(){
+	PRINTF("Right\n");
 	// Left motor (PTB0=AI2 high, PTB1=AI1 low)
 	GPIOB->PSOR |= (1<<0);
 	GPIOB->PCOR |= (1<<1);
@@ -37,7 +41,7 @@ void turn_right(){
 	GPIOC->PCOR |= (1<<1);
 	// Set PWM outputs
 	setMotorSpeed(leftSpeed,rightSpeed);
-	delay(timeTurnRight);
+	delay_ms(timeTurnRight);
 	stop();
 }
 void turn_around(){
@@ -49,7 +53,7 @@ void turn_around(){
 	GPIOC->PCOR |= (1<<1);
 	// Set PWM outputs
 	setMotorSpeed(leftSpeed,rightSpeed);
-	delay(2);
+	delay_ms(timeTurnRight*1.5);
 	stop();
 }
 void stop(){
@@ -65,6 +69,12 @@ void stop(){
 void setMotorSpeed(float left, float right){
 	TPM2->CONTROLS[0].CnV = left;
 	TPM2->CONTROLS[1].CnV = right;
+}
+void delay_ms(int ms){
+	int count = ms * 4800;
+	while(count--){
+		__asm("nop");   // no operation
+	}
 }
 
 

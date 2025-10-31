@@ -4,12 +4,18 @@
  *  Created on: Oct 30, 2025
  *      Author: Lou
  */
+#include <stdio.h>
+#include "board.h"
+#include "peripherals.h"
+#include "pin_mux.h"
+#include "clock_config.h"
 #include "MKL46Z4.h"
+#include "fsl_debug_console.h"
 #include "ultrasonic.h"
 int pulse_width = 0;
-
-bool get_distant(){
-	if(pulse_width < 500) return true;
+bool object_close = false;
+bool get_distant(int distant ){
+	if(distant < 350) return true;
 	else return false;
 }
 void send_trigger(){

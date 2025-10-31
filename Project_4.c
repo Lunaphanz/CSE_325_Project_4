@@ -19,18 +19,13 @@
 #include "servo.h"
 #include "ultrasonic.h"
 #include "state.h"
-void LED_on(){
-//LED PTD5 to test switch input
-	SIM->SCGC5 |= SIM_SCGC5_PORTD(1);
-	PORTD->PCR[5] |= PORT_PCR_MUX(1);
-	GPIOD->PDDR |= (1<<5);
-	GPIOD->PDOR &= ~(1<<5); // Turn on Green LED
+void print(){
+	PRINTF("pulse width: %d\n", pulse_width);
 }
 /*
  * @brief   Application entry point.
  */
 int main(void) {
- 	LED_on();
     /* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
@@ -46,9 +41,14 @@ int main(void) {
     setup_Wheel();
     setup_Servo();
     setup_Ultrasound();
-    servo_center(); // can remove after debugging
-    initial_state();
-    while(1){}
+    setup_LED();
+
+    while(1){
+    	if(SW1_press()){
+    		//delay_ms(2000);
+    		initial_state();
+    	}
+    }
     return 0 ;
 }
 void initial_state(){
@@ -56,12 +56,15 @@ void initial_state(){
 	while(!object_close){
 		go_straight();
 	}
+	stop();
 	servo_right();
+	print();
 	if(!object_close) {
 		turn_right();
 		r1();
+	} else {
+		l1();
 	}
-	else l1();
 }
 void r1(){
 	servo_left();

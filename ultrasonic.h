@@ -7,12 +7,14 @@
 
 #ifndef ULTRASONIC_H_
 #define ULTRASONIC_H_
-extern int pulse_width;
+
+
 //TODO: variable
-bool object_close();
+extern int pulse_width;
+extern bool object_close;
 //TODO: functions
 void send_trigger();
-bool get_distant();
+bool get_distant(int distant);
 void delay_10us();
 
 #endif /* ULTRASONIC_H_ */

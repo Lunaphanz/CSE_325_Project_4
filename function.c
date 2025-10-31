@@ -74,7 +74,6 @@ void setup_PIT(){
 void PIT_IRQHandler(){
 	if(PIT->CHANNEL[0].TFLG){ // Timer 0 Triggered
 		send_trigger();
-		object_close = get_distant();
 		PIT->CHANNEL[0].TFLG = 1; // Reset
 	}
 	if(PIT->CHANNEL[1].TFLG){ // Timer 1 Triggered
@@ -88,14 +87,16 @@ void PORTA_IRQHandler(){
 	if(GPIOA->PDIR & (1<<13)){
 		PIT->CHANNEL[1].TCTRL = 0x3; // enable Timer 1 interrupts and start timer.
 	} else {
-		PRINTF("pulse width: %d\n", pulse_width);
+		//PRINTF("pulse width: %d\n", pulse_width);
+		object_close = get_distant(pulse_width);
+		if(!object_close) LED_on();
+		else LED_off();
 		PIT->CHANNEL[1].TCTRL = 0x0; // disable Timer 1.
 		pulse_width = 0;
 	}
 }
 void setup_TPM1(){
 	//Set up TPM1, PS = 4, Clock Mod increment
-	PRINTF("TPM1 configured\n");
 	TPM1->SC |= TPM_SC_PS(2);
 	TPM1->SC |= TPM_SC_CMOD(1);
 	TPM1->MOD = TPM1_MOD;
@@ -118,8 +119,8 @@ void setup_PortB(){
 	PORTB->PCR[3] = PORT_PCR_MUX(3);
 }
 void setup_TPM2(){
-	//set up TPM2 for PWM, OSCERCLK, PS = 1, Clock Mod increment
-	TPM2->SC |= TPM_SC_PS(0);
+	//set up TPM2 for PWM, OSCERCLK, PS = 4, Clock Mod increment
+	TPM2->SC |= TPM_SC_PS(2);
 	TPM2->SC |= TPM_SC_CMOD(1);
 	TPM2->MOD = TPM2_MOD;
 	TPM2->CONTROLS[0].CnSC |= TPM_CnSC_MSB_MASK | TPM_CnSC_ELSB_MASK; // Edge PWMA
@@ -143,14 +144,15 @@ bool SW1_press(){
 bool SW2_press(){
 	return !(GPIOC->PDIR & (1<<12));
 }
-void delay(float ms){
-	float count = (ms*1e6f/40.0f)-1.0f;
-	PIT->MCR = 0x00;
-	PIT->CHANNEL[0].LDVAL = count;
-	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TEN(1); // enable timer
-	// Wait until flag is set
-	while (!(PIT->CHANNEL[0].TFLG & PIT_TFLG_TIF_MASK));
-	PIT->CHANNEL[0].TFLG = PIT_TFLG_TIF_MASK;   // Clear flag
-	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(0);   // Stop timer
+void setup_LED(){
+	SIM->SCGC5 |= SIM_SCGC5_PORTD(1);
+	PORTD->PCR[5] |= PORT_PCR_MUX(1);
+	GPIOD->PDDR |= (1<<5);
+}
+void LED_on(){
+	GPIOD->PDOR &= ~(1<<5); // Turn on Green LED
+}
+void LED_off(){
+	GPIOD->PDOR |= (1<<5);
 }
 

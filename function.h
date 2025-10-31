@@ -7,7 +7,13 @@
 
 #ifndef FUNCTION_H_
 #define FUNCTION_H_
-
+#include <stdio.h>
+#include "board.h"
+#include "peripherals.h"
+#include "pin_mux.h"
+#include "clock_config.h"
+#include "MKL46Z4.h"
+#include "fsl_debug_console.h"
 //ultrasonic
 
 //Configuration
@@ -22,6 +28,7 @@ void PORTA_IRQHandler();
 void setup_Wheel();
 void setup_PortB();
 void setup_PortC();
+void PORTC_PORTD_IRQHandler();
 void setup_Servo();
 void setup_TPM1();
 void setup_PTA12();
@@ -29,11 +36,10 @@ void setup_Ultrasound();
 void setup_PTA13();
 void setup_PTD2();
 
-//delays
-void delay(float ms);
-
-bool obstableClose();
-bool obstableFar();
+//led
+void setup_LED();
+void LED_on();
+void LED_off();
 
 //switch logic
 bool SW1_press();

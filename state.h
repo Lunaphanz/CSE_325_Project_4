@@ -11,15 +11,13 @@
 void initial_state();
 
 void r1();
-void r2();
+void r2(); //go around the wall
 void r3();
 void r4();
-void r5();
-void r6();
 
 void l1();
 void l2();
-void l3();
+void l3(); //go around the wall
 void l4();
 void l5();
 void l6();
